@@ -1,0 +1,8 @@
+baseURL = 'https://wu-yanfei.github.io/'
+locale = 'zh-cn'
+title = 'Fly.log'
+theme = 'ananke'
+
+[caches]
+  [caches.images]
+    dir = ':cacheDir/images'
