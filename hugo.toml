@@ -1,4 +1,4 @@
-baseURL = 'https://wu-yanfei.github.io/'
+baseURL = 'https://blog.yfwu.de/'
 locale = 'zh-cn'
 title = 'Fly.log'
 theme = 'ananke'
