@@ -216,6 +216,18 @@ summaryLength = 20
   maxShownLines = 20
   mode = "classic"
 
+[params.image]
+  optimise = true
+  cacheRemote = false
+  blackList = ["*.svg", "*.gif", "*.ico"]
+  
+[imaging]
+  quality = 82
+  resampleFilter = "lanczos"
+  [imaging.webp]
+    method = 4
+    useSharpYuv = true
+
 [caches]
   [caches.images]
     dir = ":cacheDir/images"

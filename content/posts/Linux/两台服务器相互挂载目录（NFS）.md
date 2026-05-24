@@ -1,5 +1,7 @@
 ---
 title: 两台服务器相互挂载目录（NFS）
+slug: nfs-mount-between-two-servers
+description: "记录如何使用 NFS 将服务器 A 的目录导出并挂载到服务器 B，实现两台服务器之间的目录共享。"
 date: 2026-01-27
 draft: false
 tags:
