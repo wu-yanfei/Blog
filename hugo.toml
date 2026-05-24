@@ -1,4 +1,4 @@
-baseURL = "https://wu-yanfei.github.io/Blog/"
+baseURL = "https://blog.yfwu.de/"
 title = "Fly.log"
 theme = ["FixIt"]
 defaultContentLanguage = "zh-cn"
@@ -219,13 +219,13 @@ summaryLength = 20
 [params.image]
   optimise = true
   cacheRemote = false
-  blackList = ["*.svg", "*.gif", "*.ico"]
-  
+  blackList = ["*.svg", "*.gif", "*.ico", "*.avif"]
+
 [imaging]
   quality = 82
   resampleFilter = "lanczos"
   [imaging.webp]
-    method = 4
+    method = 6
     useSharpYuv = true
 
 [caches]
