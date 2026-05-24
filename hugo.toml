@@ -1,8 +1,221 @@
-baseURL = 'https://blog.yfwu.de/'
-locale = 'zh-cn'
-title = 'Fly.log'
-theme = 'ananke'
+baseURL = "https://wu-yanfei.github.io/Blog/"
+title = "Fly.log"
+theme = ["FixIt"]
+defaultContentLanguage = "zh-cn"
+locale = "zh-cn"
+hasCJKLanguage = true
+
+enableRobotsTXT = true
+enableEmoji = true
+enableGitInfo = false
+mainSections = ["posts"]
+summaryLength = 20
+
+[pagination]
+  pagerSize = 10
+
+[frontmatter]
+  lastmod = ["lastmod", ":fileModTime", ":default"]
+
+# 继承 FixIt 主题自带的 markup / outputs / taxonomies 配置
+# FixIt 官方文档推荐这样写
+[markup]
+  _merge = "shallow"
+
+[outputs]
+  _merge = "shallow"
+
+[taxonomies]
+  _merge = "shallow"
+
+
+[permalinks]
+  [permalinks.page]
+    posts = "/p/:slugorcontentbasename/"
+
+[menus]
+
+  [[menus.main]]
+    identifier = "home"
+    name = "首页"
+    url = "/"
+    weight = 1
+    [menus.main.params]
+      icon = "fa-solid fa-home"
+
+  [[menus.main]]
+    identifier = "posts"
+    name = "文章"
+    url = "/posts/"
+    weight = 2
+    [menus.main.params]
+      icon = "fa-solid fa-file-lines"
+
+  [[menus.main]]
+    identifier = "archives"
+    name = "归档"
+    url = "/archives/"
+    weight = 3
+    [menus.main.params]
+      icon = "fa-solid fa-archive"
+
+  [[menus.main]]
+    identifier = "categories"
+    name = "分类"
+    url = "/categories/"
+    weight = 4
+    [menus.main.params]
+      icon = "fa-solid fa-folder-tree"
+
+  [[menus.main]]
+    identifier = "tags"
+    name = "标签"
+    url = "/tags/"
+    weight = 5
+    [menus.main.params]
+      icon = "fa-solid fa-tags"
+
+[params]
+  version = "0.4.X"
+  description = "Fly.log"
+  keywords = ["Hugo", "FixIt", "Obsidian", "Docker", "Linux"]
+  defaultTheme = "auto"
+  dateFormat = "2006-01-02"
+  summaryPlainify = true
+  capitalizeTitles = false
+
+[params.author]
+  name = "wu-yanfei"
+  email = ""
+  link = "https://github.com/wu-yanfei"
+  avatar = ""
+
+[params.header]
+  desktopMode = "sticky"
+  mobileMode = "auto"
+
+[params.header.title]
+  name = "Fly.log"
+  pre = ""
+  post = ""
+  typeit = false
+
+[params.header.subtitle]
+  name = "记录技术、研究与折腾过程"
+  typeit = false
+
+[params.breadcrumb]
+  enable = true
+  sticky = false
+  showHome = true
+
+[params.footer]
+  enable = true
+  copyright = true
+  author = true
+  since = "2026"
+  license = ""
+
+[params.footer.powered]
+  enable = true
+  hugoLogo = false
+  themeLogo = false
+
+[params.home]
+
+[params.home.posts]
+  enable = true
+  paginate = 8
+
+[params.search]
+  enable = true
+  type = "fuse"
+  contentLength = 4000
+  placeholder = "搜索文章"
+  maxResultLength = 10
+  snippetLength = 30
+  highlightTag = "em"
+  absoluteURL = false
+
+[params.search.fuse]
+  isCaseSensitive = false
+  minMatchCharLength = 2
+  findAllMatches = false
+  location = 0
+  threshold = 0.3
+  distance = 100
+  ignoreLocation = false
+  useExtendedSearch = false
+  ignoreFieldNorm = false
+
+[params.social]
+  GitHub = "wu-yanfei"
+
+[params.archives]
+  paginate = 20
+  dateFormat = "01-02"
+
+[params.section]
+  paginate = 20
+  dateFormat = "01-02"
+
+[params.list]
+  paginate = 20
+  dateFormat = "01-02"
+
+[params.page]
+  authorAvatar = false
+  hiddenFromHomePage = false
+  hiddenFromSearch = false
+  hiddenFromRelated = false
+  hiddenFromFeed = false
+
+  twemoji = false
+  lightgallery = false
+  ruby = true
+  fraction = true
+  fontawesome = true
+
+  linkToMarkdown = false
+  linkToSource = false
+  linkToEdit = false
+  linkToReport = false
+  linkToVscode = false
+
+  pageStyle = "normal"
+  autoBookmark = false
+  showLastmod = false
+  wordCount = true
+  readingTime = true
+  endFlag = ""
+
+[params.page.toc]
+  enable = true
+  keepStatic = false
+  auto = true
+  position = "right"
+  ordered = false
+  startLevel = 2
+  endLevel = 4
+
+[params.page.share]
+  enable = false
+
+[params.page.comment]
+  enable = false
+
+[params.page.math]
+  enable = false
+  type = "katex"
+
+[params.codeblock]
+  wrapper = true
+  copyable = true
+  lineNosToggler = true
+  lineWrapToggler = true
+  maxShownLines = 20
+  mode = "classic"
 
 [caches]
   [caches.images]
-    dir = ':cacheDir/images'
+    dir = ":cacheDir/images"
