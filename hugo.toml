@@ -228,6 +228,13 @@ summaryLength = 20
     method = 6
     useSharpYuv = true
 
+
+[params.busuanzi]
+  enable = true
+  siteViews = true
+  pageViews = true
+  source = "https://vercount.one/js"
+
 [caches]
   [caches.images]
     dir = ":cacheDir/images"
