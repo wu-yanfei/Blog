@@ -1,6 +1,7 @@
 ---
 title: 拒绝直接暴露docker容器端口
 slug: avoid-exposing-docker-container-ports
+translationKey: avoid-exposing-docker-container-ports
 description: "介绍如何将 Docker 容器端口绑定到 127.0.0.1，并通过 Nginx 反向代理和 TLS 对外提供服务，避免端口直接暴露。"
 date: 2025-07-27
 draft: false

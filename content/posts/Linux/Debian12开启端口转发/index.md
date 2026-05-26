@@ -1,6 +1,7 @@
 ---
 title: Debian12开启端口转发
 slug: debian12-nftables-port-forwarding
+translationKey: debian12-nftables-port-forwarding
 description: "记录在 Debian 12 中开启 IP 转发，并使用 nftables 将本机端口转发到目标服务器端口的配置方法。"
 date: 2026-02-02
 draft: false

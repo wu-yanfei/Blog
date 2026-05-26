@@ -1,6 +1,7 @@
 ---
 title: 使用datatable加速大型csv读取
 slug: datatable-fast-large-csv-reading
+translationKey: datatable-fast-large-csv-reading
 description: "介绍在 Python 中使用 datatable 快速读取大型 CSV 文件，并将结果转换为 Pandas DataFrame 的基本用法。"
 date: 2025-07-18
 draft: false
