@@ -5,6 +5,12 @@ defaultContentLanguage = "zh-cn"
 defaultContentLanguageInSubdir = false
 hasCJKLanguage = true
 
+enableRobotsTXT = true
+enableEmoji = true
+enableGitInfo = false
+mainSections = ["posts"]
+summaryLength = 20
+
 [languages]
   [languages.zh-cn]
     locale = "zh-CN"
@@ -32,12 +38,6 @@ hasCJKLanguage = true
       name = "Notes on tech, research, and experiments"
     [languages.en.params.search]
       placeholder = "Search posts"
-
-enableRobotsTXT = true
-enableEmoji = true
-enableGitInfo = false
-mainSections = ["posts"]
-summaryLength = 20
 
 [pagination]
   pagerSize = 10
