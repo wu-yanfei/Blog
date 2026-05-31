@@ -4,6 +4,7 @@ slug: du-check-directory-disk-usage
 translationKey: du-check-directory-disk-usage
 description: "Records how to use du on Linux to check disk usage for the current directory, subdirectories, and files, and sort the results by size."
 date: 2026-05-31
+lastmod: 2026-05-31
 draft: false
 tags:
 categories:

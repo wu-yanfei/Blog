@@ -4,6 +4,7 @@ slug: tensorboard-usage
 translationKey: tensorboard-usage
 description: "Records how to start TensorBoard in the background with nohup, read training logs, and access the visualization page through a specified port."
 date: 2026-01-30
+lastmod: 2026-01-30
 draft: false
 tags:
 categories:

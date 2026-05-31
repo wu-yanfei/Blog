@@ -4,6 +4,7 @@ slug: bioinformatics-conda-environment
 translationKey: bioinformatics-conda-environment
 description: "记录生物信息分析中配置 Conda channels、设置代理、创建环境并使用 mamba 加速安装 Python 包的方法。"
 date: 2026-01-26
+lastmod: 2026-01-26
 draft: false
 tags:
 categories:

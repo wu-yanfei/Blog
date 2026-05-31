@@ -4,6 +4,7 @@ slug: nfs-mount-between-two-servers
 translationKey: nfs-mount-between-two-servers
 description: "Records how to use NFS to export a directory from server A and mount it on server B for directory sharing between two servers."
 date: 2026-01-27
+lastmod: 2026-01-27
 draft: false
 tags:
 categories:

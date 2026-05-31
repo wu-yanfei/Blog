@@ -4,6 +4,7 @@ slug: debian12-nftables-port-forwarding
 translationKey: debian12-nftables-port-forwarding
 description: "Records how to enable IP forwarding on Debian 12 and use nftables to forward a local port to a target server port."
 date: 2026-02-02
+lastmod: 2026-02-02
 draft: false
 tags:
 categories:

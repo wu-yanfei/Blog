@@ -4,6 +4,7 @@ slug: change-ssh-port-disable-password-login
 translationKey: change-ssh-port-disable-password-login
 description: "记录在 Debian 12 服务器上配置 SSH 密钥、修改 SSH 端口、禁用密码登录并验证新配置的安全步骤。"
 date: 2026-01-31
+lastmod: 2026-01-31
 draft: false
 tags:
 categories:

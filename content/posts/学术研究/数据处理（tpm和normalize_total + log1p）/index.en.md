@@ -4,6 +4,7 @@ slug: tpm-vs-normalize-total-log1p
 translationKey: tpm-vs-normalize-total-log1p
 description: "Compares the principles, use cases, advantages, disadvantages, and selection logic of normalize_total + log1p and TPM in single-cell data processing."
 date: 2025-07-19
+lastmod: 2025-07-19
 draft: false
 tags:
 categories:

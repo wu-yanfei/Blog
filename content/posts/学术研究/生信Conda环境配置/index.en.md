@@ -4,6 +4,7 @@ slug: bioinformatics-conda-environment
 translationKey: bioinformatics-conda-environment
 description: "Records how to configure Conda channels, set up proxies, create environments, and use mamba to speed up Python package installation for bioinformatics analysis."
 date: 2026-01-26
+lastmod: 2026-01-26
 draft: false
 tags:
 categories:

@@ -4,6 +4,7 @@ slug: logrotate-rotate-logs
 translationKey: logrotate-rotate-logs
 description: "Records how to install and configure logrotate on Debian 12, including custom log rotation, copytruncate, and manual configuration testing."
 date: 2026-03-24
+lastmod: 2026-03-24
 draft: false
 tags:
 categories:

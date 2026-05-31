@@ -4,6 +4,7 @@ slug: tpm-vs-normalize-total-log1p
 translationKey: tpm-vs-normalize-total-log1p
 description: "对比单细胞数据处理中 normalize_total + log1p 与 TPM 的原理、适用场景、优缺点以及二者的选择关系。"
 date: 2025-07-19
+lastmod: 2025-07-19
 draft: false
 tags:
 categories:

@@ -4,6 +4,7 @@ slug: debian12-enable-bbr-fq
 translationKey: debian12-enable-bbr-fq
 description: "Records how to enable BBR congestion control and the FQ queue discipline on Debian 12 with sysctl, and how to verify that the configuration is active."
 date: 2026-01-31
+lastmod: 2026-01-31
 draft: false
 tags:
 categories:

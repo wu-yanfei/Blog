@@ -4,6 +4,7 @@ slug: change-ssh-port-disable-password-login
 translationKey: change-ssh-port-disable-password-login
 description: "Records the safe steps for configuring SSH keys, changing the SSH port, disabling password login, and verifying the new configuration on a Debian 12 server."
 date: 2026-01-31
+lastmod: 2026-01-31
 draft: false
 tags:
 categories:

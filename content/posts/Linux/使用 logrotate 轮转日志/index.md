@@ -4,6 +4,7 @@ slug: logrotate-rotate-logs
 translationKey: logrotate-rotate-logs
 description: "记录 Debian 12 中安装和配置 logrotate 的方法，包括自定义日志轮转、copytruncate 以及手动测试配置。"
 date: 2026-03-24
+lastmod: 2026-03-24
 draft: false
 tags:
 categories:

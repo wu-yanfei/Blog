@@ -4,6 +4,7 @@ slug: debian12-enable-bbr-fq
 translationKey: debian12-enable-bbr-fq
 description: "记录在 Debian 12 中通过 sysctl 开启 BBR 拥塞控制与 FQ 队列，并验证配置是否生效。"
 date: 2026-01-31
+lastmod: 2026-01-31
 draft: false
 tags:
 categories:

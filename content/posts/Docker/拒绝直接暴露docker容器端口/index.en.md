@@ -4,6 +4,7 @@ slug: avoid-exposing-docker-container-ports
 translationKey: avoid-exposing-docker-container-ports
 description: "Explains how to bind Docker container ports to 127.0.0.1 and expose services through an Nginx reverse proxy with TLS instead of exposing container ports directly."
 date: 2025-07-27
+lastmod: 2025-07-27
 draft: false
 tags:
 categories:

@@ -4,6 +4,7 @@ slug: datatable-fast-large-csv-reading
 translationKey: datatable-fast-large-csv-reading
 description: "Introduces the basic usage of datatable in Python for quickly reading large CSV files and converting the result to a Pandas DataFrame."
 date: 2025-07-18
+lastmod: 2025-07-18
 draft: false
 tags:
 categories:

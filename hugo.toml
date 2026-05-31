@@ -43,7 +43,7 @@ summaryLength = 20
   pagerSize = 10
 
 [frontmatter]
-  lastmod = ["lastmod", ":fileModTime", ":default"]
+  lastmod = ["lastmod", "date"]
 
 # 继承 FixIt 主题自带的 markup / outputs / taxonomies 配置
 # FixIt 官方文档推荐这样写

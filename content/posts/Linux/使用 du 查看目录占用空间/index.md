@@ -4,6 +4,7 @@ slug: du-check-directory-disk-usage
 translationKey: du-check-directory-disk-usage
 description: "记录 Linux 中使用 du 查看当前目录、子目录和文件占用空间的方法，并按大小排序。"
 date: 2026-05-31
+lastmod: 2026-05-31
 draft: false
 tags:
 categories:

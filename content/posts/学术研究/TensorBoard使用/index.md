@@ -4,6 +4,7 @@ slug: tensorboard-usage
 translationKey: tensorboard-usage
 description: "记录使用 nohup 后台启动 TensorBoard、读取训练日志并通过指定端口访问可视化页面的方法。"
 date: 2026-01-30
+lastmod: 2026-01-30
 draft: false
 tags:
 categories:
