@@ -7,6 +7,11 @@ date: 2026-01-27
 lastmod: 2026-01-27
 draft: false
 tags:
+  - NFS
+  - 目录挂载
+  - 文件共享
+  - 服务器运维
+  - Linux 存储
 categories:
   - Linux
 ---

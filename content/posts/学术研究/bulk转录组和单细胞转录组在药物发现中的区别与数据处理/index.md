@@ -8,8 +8,10 @@ lastmod: 2026-06-07
 draft: false
 tags:
   - 转录组测序
-  - 药物发现
   - 单细胞
+  - bulk RNA-seq
+  - 药物发现
+  - 数据处理
 categories:
   - 学术研究
 ---

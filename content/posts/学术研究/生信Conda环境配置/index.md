@@ -7,6 +7,11 @@ date: 2026-01-26
 lastmod: 2026-01-26
 draft: false
 tags:
+  - 生物信息
+  - Conda
+  - mamba
+  - Python 环境
+  - 环境配置
 categories:
   - 学术研究
 ---

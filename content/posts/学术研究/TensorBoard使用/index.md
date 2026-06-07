@@ -7,6 +7,11 @@ date: 2026-01-30
 lastmod: 2026-01-30
 draft: false
 tags:
+  - TensorBoard
+  - 深度学习
+  - 模型训练
+  - 可视化
+  - nohup
 categories:
   - 学术研究
 ---

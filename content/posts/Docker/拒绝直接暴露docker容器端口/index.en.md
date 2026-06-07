@@ -7,6 +7,12 @@ date: 2025-07-27
 lastmod: 2025-07-27
 draft: false
 tags:
+  - Docker
+  - Port Mapping
+  - Nginx
+  - Reverse Proxy
+  - TLS
+  - Security Hardening
 categories:
   - Docker
 ---

@@ -7,6 +7,11 @@ date: 2026-03-24
 lastmod: 2026-03-24
 draft: false
 tags:
+  - logrotate
+  - Log Management
+  - Debian
+  - Server Administration
+  - System Maintenance
 categories:
   - Linux
 ---

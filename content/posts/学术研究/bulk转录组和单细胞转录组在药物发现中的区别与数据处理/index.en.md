@@ -8,8 +8,10 @@ lastmod: 2026-06-07
 draft: false
 tags:
   - Transcriptomics
-  - Drug Discovery
   - Single-cell
+  - bulk RNA-seq
+  - Drug Discovery
+  - Data Processing
 categories:
   - Research
 ---

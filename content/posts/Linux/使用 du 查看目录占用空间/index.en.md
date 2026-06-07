@@ -7,6 +7,10 @@ date: 2026-05-31
 lastmod: 2026-05-31
 draft: false
 tags:
+  - du
+  - Disk Usage
+  - File Management
+  - Command Line
 categories:
   - Linux
 ---

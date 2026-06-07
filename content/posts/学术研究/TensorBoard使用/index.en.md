@@ -7,6 +7,11 @@ date: 2026-01-30
 lastmod: 2026-01-30
 draft: false
 tags:
+  - TensorBoard
+  - Deep Learning
+  - Model Training
+  - Visualization
+  - nohup
 categories:
   - Research
 ---

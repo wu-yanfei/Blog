@@ -7,6 +7,12 @@ date: 2025-07-19
 lastmod: 2025-07-19
 draft: false
 tags:
+  - Single-cell
+  - Data Normalization
+  - TPM
+  - log1p
+  - Scanpy
+  - Data Processing
 categories:
   - Research
 ---

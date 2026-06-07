@@ -7,6 +7,11 @@ date: 2026-01-31
 lastmod: 2026-01-31
 draft: false
 tags:
+  - Debian
+  - BBR
+  - FQ
+  - 网络优化
+  - sysctl
 categories:
   - Linux
 ---

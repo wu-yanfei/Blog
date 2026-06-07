@@ -7,6 +7,11 @@ date: 2026-02-02
 lastmod: 2026-02-02
 draft: false
 tags:
+  - Debian
+  - 端口转发
+  - nftables
+  - IP 转发
+  - 网络配置
 categories:
   - Linux
 ---

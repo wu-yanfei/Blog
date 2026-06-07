@@ -7,6 +7,11 @@ date: 2026-01-27
 lastmod: 2026-01-27
 draft: false
 tags:
+  - NFS
+  - Directory Mount
+  - File Sharing
+  - Server Administration
+  - Linux Storage
 categories:
   - Linux
 ---

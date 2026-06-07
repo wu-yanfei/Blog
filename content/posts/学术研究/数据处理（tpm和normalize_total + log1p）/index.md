@@ -7,6 +7,12 @@ date: 2025-07-19
 lastmod: 2025-07-19
 draft: false
 tags:
+  - 单细胞
+  - 数据标准化
+  - TPM
+  - log1p
+  - Scanpy
+  - 数据处理
 categories:
   - 学术研究
 ---

@@ -7,6 +7,11 @@ date: 2026-01-26
 lastmod: 2026-01-26
 draft: false
 tags:
+  - Bioinformatics
+  - Conda
+  - mamba
+  - Python Environment
+  - Environment Setup
 categories:
   - Research
 ---

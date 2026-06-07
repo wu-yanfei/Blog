@@ -7,6 +7,10 @@ date: 2026-05-31
 lastmod: 2026-05-31
 draft: false
 tags:
+  - du
+  - 磁盘空间
+  - 文件管理
+  - 命令行
 categories:
   - Linux
 ---

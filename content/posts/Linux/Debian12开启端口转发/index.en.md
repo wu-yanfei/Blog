@@ -7,6 +7,11 @@ date: 2026-02-02
 lastmod: 2026-02-02
 draft: false
 tags:
+  - Debian
+  - Port Forwarding
+  - nftables
+  - IP Forwarding
+  - Network Configuration
 categories:
   - Linux
 ---

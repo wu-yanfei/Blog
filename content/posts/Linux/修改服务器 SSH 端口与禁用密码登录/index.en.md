@@ -7,6 +7,11 @@ date: 2026-01-31
 lastmod: 2026-01-31
 draft: false
 tags:
+  - SSH
+  - Security Hardening
+  - Debian
+  - Key-based Login
+  - Server Administration
 categories:
   - Linux
 ---

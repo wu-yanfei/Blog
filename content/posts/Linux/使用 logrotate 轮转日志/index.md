@@ -7,6 +7,11 @@ date: 2026-03-24
 lastmod: 2026-03-24
 draft: false
 tags:
+  - logrotate
+  - 日志管理
+  - Debian
+  - 服务器运维
+  - 系统维护
 categories:
   - Linux
 ---
