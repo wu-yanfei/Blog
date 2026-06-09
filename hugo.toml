@@ -80,18 +80,10 @@ summaryLength = 20
       icon = "fa-solid fa-file-lines"
 
   [[languages.zh-cn.menus.main]]
-    identifier = "archives"
-    name = "归档"
-    url = "/archives/"
-    weight = 3
-    [languages.zh-cn.menus.main.params]
-      icon = "fa-solid fa-archive"
-
-  [[languages.zh-cn.menus.main]]
     identifier = "categories"
     name = "分类"
     url = "/categories/"
-    weight = 4
+    weight = 3
     [languages.zh-cn.menus.main.params]
       icon = "fa-solid fa-folder-tree"
 
@@ -99,9 +91,25 @@ summaryLength = 20
     identifier = "tags"
     name = "标签"
     url = "/tags/"
-    weight = 5
+    weight = 4
     [languages.zh-cn.menus.main.params]
       icon = "fa-solid fa-tags"
+
+  [[languages.zh-cn.menus.main]]
+    identifier = "guestbook"
+    name = "留言板"
+    url = "/guestbook/"
+    weight = 5
+    [languages.zh-cn.menus.main.params]
+      icon = "fa-solid fa-comments"
+
+  [[languages.zh-cn.menus.main]]
+    identifier = "about"
+    name = "关于"
+    url = "/about/"
+    weight = 6
+    [languages.zh-cn.menus.main.params]
+      icon = "fa-solid fa-user"
 
 [languages.en.menus]
 
@@ -122,18 +130,10 @@ summaryLength = 20
       icon = "fa-solid fa-file-lines"
 
   [[languages.en.menus.main]]
-    identifier = "archives"
-    name = "Archives"
-    url = "/archives/"
-    weight = 3
-    [languages.en.menus.main.params]
-      icon = "fa-solid fa-archive"
-
-  [[languages.en.menus.main]]
     identifier = "categories"
     name = "Categories"
     url = "/categories/"
-    weight = 4
+    weight = 3
     [languages.en.menus.main.params]
       icon = "fa-solid fa-folder-tree"
 
@@ -141,9 +141,25 @@ summaryLength = 20
     identifier = "tags"
     name = "Tags"
     url = "/tags/"
-    weight = 5
+    weight = 4
     [languages.en.menus.main.params]
       icon = "fa-solid fa-tags"
+
+  [[languages.en.menus.main]]
+    identifier = "guestbook"
+    name = "Guestbook"
+    url = "/guestbook/"
+    weight = 5
+    [languages.en.menus.main.params]
+      icon = "fa-solid fa-comments"
+
+  [[languages.en.menus.main]]
+    identifier = "about"
+    name = "About"
+    url = "/about/"
+    weight = 6
+    [languages.en.menus.main.params]
+      icon = "fa-solid fa-user"
 
 [params]
   version = "0.4.X"
@@ -220,6 +236,13 @@ summaryLength = 20
 
 [params.social]
   GitHub = "wu-yanfei"
+
+[params.tagcloud]
+  enable = true
+  min = 14
+  max = 32
+  peakCount = 10
+  orderby = "name"
 
 [params.archives]
   paginate = 20
