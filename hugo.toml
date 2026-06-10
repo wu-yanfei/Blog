@@ -300,7 +300,7 @@ summaryLength = 20
 [params.page.comment.waline]
   enable = true
   serverURL = "https://waline.yfwu.de"
-  dark = "html[data-theme-mode='dark']"
+  dark = "html[data-theme-mode=dark]"
 
 [params.page.math]
   enable = false
