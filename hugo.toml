@@ -297,6 +297,10 @@ summaryLength = 20
 [params.page.comment]
   enable = false
 
+[params.page.comment.waline]
+  enable = true
+  serverURL = "https://waline.yfwu.de"
+
 [params.page.math]
   enable = false
   type = "katex"
