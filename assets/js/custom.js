@@ -16,7 +16,8 @@
   let mount;
   let captchaContainer;
   let placeholder;
-  let hideTimer;
+  let tokenTimer;
+  let restoreTimer;
 
   const getCaptchaContainer = () => captchaContainer || document.querySelector('.wl-captcha-container');
 
@@ -68,13 +69,9 @@
     return container;
   };
 
-  const showTurnstileModal = () => {
-    window.clearTimeout(hideTimer);
-    moveCaptchaToModal();
-    document.body?.classList.add(activeClass);
-  };
-
-  const restoreCaptchaContainer = (clearContainer = true) => {
+  const restoreCaptchaContainer = (clearContainer = false) => {
+    window.clearInterval(tokenTimer);
+    window.clearTimeout(restoreTimer);
     document.body?.classList.remove(activeClass);
 
     if (captchaContainer && clearContainer) {
@@ -89,101 +86,67 @@
     placeholder = null;
   };
 
-  const scheduleRestoreCaptchaContainer = (clearContainer = true) => {
-    window.clearTimeout(hideTimer);
-    hideTimer = window.setTimeout(() => restoreCaptchaContainer(clearContainer), 600);
+  const showTurnstileModal = () => {
+    window.clearTimeout(restoreTimer);
+    moveCaptchaToModal();
+    document.body?.classList.add(activeClass);
   };
 
-  const patchTurnstile = (turnstile) => {
-    if (!turnstile || turnstile.__walineTurnstilePatched) return turnstile;
-
-    const originalRender = turnstile.render?.bind(turnstile);
-    if (typeof originalRender !== 'function') return turnstile;
-
-    turnstile.render = (target, options = {}) => {
-      const container = moveCaptchaToModal();
-      showTurnstileModal();
-
-      let widgetId;
-      const cleanup = () => {
-        if (widgetId != null && typeof turnstile.remove === 'function') {
-          try {
-            turnstile.remove(widgetId);
-          } catch (_) {}
-        }
-        scheduleRestoreCaptchaContainer(true);
-      };
-
-      widgetId = originalRender(container || target, {
-        ...options,
-        callback: (token) => {
-          options.callback?.(token);
-          cleanup();
-        },
-        'error-callback': (...args) => {
-          restoreCaptchaContainer(false);
-          options['error-callback']?.(...args);
-        },
-        'expired-callback': (...args) => {
-          restoreCaptchaContainer(false);
-          options['expired-callback']?.(...args);
-        },
-      });
-
-      return widgetId;
-    };
-
-    turnstile.__walineTurnstilePatched = true;
-    return turnstile;
+  const hasSubmitLoading = (button) => {
+    return Boolean(button?.disabled || button?.querySelector('svg'));
   };
 
-  const installTurnstileHook = () => {
-    if (window.turnstile) {
-      window.turnstile = patchTurnstile(window.turnstile);
-      return;
-    }
+  const startTokenWatcher = (button) => {
+    window.clearInterval(tokenTimer);
 
-    let turnstileApi;
-    try {
-      Object.defineProperty(window, 'turnstile', {
-        configurable: true,
-        get() {
-          return turnstileApi;
-        },
-        set(value) {
-          turnstileApi = patchTurnstile(value);
-          Object.defineProperty(window, 'turnstile', {
-            configurable: true,
-            writable: true,
-            value: turnstileApi,
-          });
-        },
-      });
-    } catch (_) {}
+    let ticks = 0;
+    tokenTimer = window.setInterval(() => {
+      ticks += 1;
+
+      const container = getCaptchaContainer();
+      const token = container?.querySelector('input[name="cf-turnstile-response"]')?.value
+        || document.querySelector('input[name="cf-turnstile-response"]')?.value;
+      const hasFrame = Boolean(container?.querySelector('iframe'));
+
+      if (token) {
+        restoreTimer = window.setTimeout(() => restoreCaptchaContainer(true), 600);
+        return;
+      }
+
+      if (!hasSubmitLoading(button) && !hasFrame) {
+        restoreCaptchaContainer(false);
+        return;
+      }
+
+      if (ticks > 600) {
+        restoreCaptchaContainer(false);
+      }
+    }, 200);
   };
 
-  const startPatchPolling = () => {
+  const waitForSubmitLoading = (button) => {
     let attempts = 0;
+
     const timer = window.setInterval(() => {
       attempts += 1;
 
-      if (window.turnstile) {
-        window.turnstile = patchTurnstile(window.turnstile);
+      if (hasSubmitLoading(button)) {
         window.clearInterval(timer);
+        showTurnstileModal();
+        startTokenWatcher(button);
+        return;
       }
 
-      if (attempts > 100) {
+      if (attempts > 20) {
         window.clearInterval(timer);
       }
-    }, 30);
+    }, 25);
   };
 
   document.addEventListener('click', (event) => {
-    if (event.target?.closest?.('.wl-btn.primary')) {
-      showTurnstileModal();
-      startPatchPolling();
-    }
-  }, true);
+    const button = event.target?.closest?.('.wl-btn.primary');
+    if (!button) return;
 
-  installTurnstileHook();
+    waitForSubmitLoading(button);
+  }, false);
 })();
