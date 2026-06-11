@@ -11,10 +11,12 @@
     ? {
         title: 'Security verification',
         hint: 'The comment will be submitted automatically after verification.',
+        close: 'Cancel verification',
       }
     : {
         title: '安全验证',
         hint: '验证完成后会自动提交评论。',
+        close: '取消验证',
       };
 
   let modal;
@@ -22,63 +24,19 @@
   let placeholder;
   let watchTimer;
   let restoreTimer;
-
-  const forceTurnstileNormalSize = () => {
-    const patch = () => {
-      const turnstile = window.turnstile;
-      if (!turnstile || turnstile.__walineNormalSizePatched || typeof turnstile.render !== 'function') return false;
-
-      const render = turnstile.render.bind(turnstile);
-      turnstile.render = (target, options = {}) => render(target, {
-        ...options,
-        size: 'normal',
-      });
-      turnstile.__walineNormalSizePatched = true;
-      return true;
-    };
-
-    if (patch() || window.__walineTurnstileScriptPatched) return;
-
-    const appendChild = Node.prototype.appendChild;
-    Node.prototype.appendChild = function (node) {
-      if (node instanceof HTMLScriptElement && node.src.includes('challenges.cloudflare.com/turnstile/')) {
-        node.addEventListener('load', patch, { once: true });
-      }
-      return appendChild.call(this, node);
-    };
-
-    window.__walineTurnstileScriptPatched = true;
-  };
+  let resolveTurnstile;
+  let verificationCancelled = false;
 
   const isSubmitting = (button) => Boolean(button?.disabled || button?.querySelector('svg'));
   const getCaptchaContainer = () => document.querySelector('.wl-captcha-container');
 
-  const ensureModal = () => {
-    if (modal) return;
+  const finishPendingTurnstile = (token = '__waline_cancelled__') => {
+    if (!resolveTurnstile) return false;
 
-    modal = document.createElement('div');
-    modal.className = 'waline-turnstile-modal';
-    modal.setAttribute('role', 'dialog');
-    modal.setAttribute('aria-modal', 'true');
-    modal.setAttribute('aria-label', labels.title);
-
-    const card = document.createElement('div');
-    card.className = 'waline-turnstile-card';
-
-    const title = document.createElement('div');
-    title.className = 'waline-turnstile-title';
-    title.textContent = labels.title;
-
-    mount = document.createElement('div');
-    mount.className = 'waline-turnstile-mount';
-
-    const hint = document.createElement('div');
-    hint.className = 'waline-turnstile-hint';
-    hint.textContent = labels.hint;
-
-    card.append(title, mount, hint);
-    modal.append(card);
-    document.body.append(modal);
+    const resolve = resolveTurnstile;
+    resolveTurnstile = null;
+    resolve(token);
+    return true;
   };
 
   const restoreCaptcha = (clear = false) => {
@@ -96,10 +54,113 @@
     placeholder = null;
   };
 
+  const cancelVerification = () => {
+    verificationCancelled = true;
+    finishPendingTurnstile();
+    restoreCaptcha(true);
+  };
+
+  const forceTurnstileNormalSize = () => {
+    const patch = () => {
+      const turnstile = window.turnstile;
+      if (!turnstile || turnstile.__walineNormalSizePatched || typeof turnstile.render !== 'function') return false;
+
+      const render = turnstile.render.bind(turnstile);
+      turnstile.render = (target, options = {}) => {
+        if (verificationCancelled) {
+          verificationCancelled = false;
+          window.setTimeout(() => options.callback?.('__waline_cancelled__'), 0);
+          return null;
+        }
+
+        resolveTurnstile = (token) => options.callback?.(token);
+
+        return render(target, {
+          ...options,
+          size: 'normal',
+          language: isEnglish ? 'en' : 'zh-CN',
+          callback: (token) => {
+            resolveTurnstile = null;
+            options.callback?.(token);
+          },
+          'error-callback': (...args) => {
+            finishPendingTurnstile();
+            options['error-callback']?.(...args);
+          },
+          'expired-callback': (...args) => {
+            finishPendingTurnstile();
+            options['expired-callback']?.(...args);
+          },
+        });
+      };
+      turnstile.__walineNormalSizePatched = true;
+      return true;
+    };
+
+    if (patch() || window.__walineTurnstileScriptPatched) return;
+
+    const appendChild = Node.prototype.appendChild;
+    const restoreAppendChild = () => {
+      if (Node.prototype.appendChild === patchedAppendChild) {
+        Node.prototype.appendChild = appendChild;
+      }
+    };
+    const patchedAppendChild = function (node) {
+      if (node instanceof HTMLScriptElement && node.src.includes('challenges.cloudflare.com/turnstile/')) {
+        node.addEventListener('load', () => {
+          patch();
+          restoreAppendChild();
+        }, { once: true });
+        node.addEventListener('error', restoreAppendChild, { once: true });
+      }
+      return appendChild.call(this, node);
+    };
+
+    Node.prototype.appendChild = patchedAppendChild;
+    window.__walineTurnstileScriptPatched = true;
+  };
+
+  const ensureModal = () => {
+    if (modal) return;
+
+    modal = document.createElement('div');
+    modal.className = 'waline-turnstile-modal';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', labels.title);
+
+    const card = document.createElement('div');
+    card.className = 'waline-turnstile-card';
+
+    const close = document.createElement('button');
+    close.className = 'waline-turnstile-close';
+    close.type = 'button';
+    close.setAttribute('aria-label', labels.close);
+    close.title = labels.close;
+    close.textContent = '×';
+    close.addEventListener('click', cancelVerification);
+
+    const title = document.createElement('div');
+    title.className = 'waline-turnstile-title';
+    title.textContent = labels.title;
+
+    mount = document.createElement('div');
+    mount.className = 'waline-turnstile-mount';
+
+    const hint = document.createElement('div');
+    hint.className = 'waline-turnstile-hint';
+    hint.textContent = labels.hint;
+
+    card.append(close, title, mount, hint);
+    modal.append(card);
+    document.body.append(modal);
+  };
+
   const openCaptchaModal = (button) => {
     const container = getCaptchaContainer();
     if (!container) return;
 
+    verificationCancelled = false;
     window.clearTimeout(restoreTimer);
     ensureModal();
 
@@ -117,12 +178,18 @@
       const token = container.querySelector('input[name="cf-turnstile-response"]')?.value;
 
       if (token) {
+        resolveTurnstile = null;
         restoreTimer = window.setTimeout(() => restoreCaptcha(true), 600);
         return;
       }
 
-      if (!isSubmitting(button) || ++ticks > 600) {
+      if (!isSubmitting(button)) {
         restoreCaptcha(false);
+        return;
+      }
+
+      if (++ticks > 600) {
+        cancelVerification();
       }
     }, 200);
   };
