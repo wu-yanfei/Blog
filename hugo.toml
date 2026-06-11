@@ -301,6 +301,7 @@ summaryLength = 20
   enable = true
   serverURL = "https://waline.yfwu.de"
   dark = "html[data-theme-mode='dark']"
+  turnstileKey = "0x4AAAAAADio2mKy8xD1X2e5"
 
 [params.page.math]
   enable = false
