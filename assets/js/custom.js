@@ -10,83 +10,88 @@
   if (!waline?.turnstileKey) return;
 
   const activeClass = 'waline-turnstile-active';
-  const getCaptchaContainer = () => document.querySelector('.wl-captcha-container');
+  const isEnglish = window.location.pathname.startsWith('/en/');
 
+  let modal;
+  let mount;
+  let captchaContainer;
+  let placeholder;
   let hideTimer;
+
+  const getCaptchaContainer = () => captchaContainer || document.querySelector('.wl-captcha-container');
+
+  const ensureModal = () => {
+    if (modal) return modal;
+
+    modal = document.createElement('div');
+    modal.className = 'waline-turnstile-modal';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', isEnglish ? 'Security verification' : '安全验证');
+
+    const card = document.createElement('div');
+    card.className = 'waline-turnstile-card';
+
+    const title = document.createElement('div');
+    title.className = 'waline-turnstile-title';
+    title.textContent = isEnglish ? 'Security verification' : '安全验证';
+
+    mount = document.createElement('div');
+    mount.className = 'waline-turnstile-mount';
+
+    const hint = document.createElement('div');
+    hint.className = 'waline-turnstile-hint';
+    hint.textContent = isEnglish
+      ? 'The comment will be submitted automatically after verification.'
+      : '验证完成后会自动提交评论。';
+
+    card.append(title, mount, hint);
+    modal.append(card);
+    document.body.append(modal);
+
+    return modal;
+  };
+
+  const moveCaptchaToModal = () => {
+    ensureModal();
+
+    const container = getCaptchaContainer();
+    if (!container || !mount) return null;
+
+    if (!placeholder && container.parentNode !== mount) {
+      placeholder = document.createComment('waline captcha placeholder');
+      container.parentNode?.insertBefore(placeholder, container);
+    }
+
+    mount.append(container);
+    captchaContainer = container;
+    return container;
+  };
 
   const showTurnstileModal = () => {
     window.clearTimeout(hideTimer);
+    moveCaptchaToModal();
     document.body?.classList.add(activeClass);
   };
 
-  const hideTurnstileModal = (clearContainer = true) => {
+  const restoreCaptchaContainer = (clearContainer = true) => {
     document.body?.classList.remove(activeClass);
-    if (clearContainer) {
-      getCaptchaContainer()?.replaceChildren();
+
+    if (captchaContainer && clearContainer) {
+      captchaContainer.replaceChildren();
     }
+
+    if (captchaContainer && placeholder?.parentNode) {
+      placeholder.parentNode.insertBefore(captchaContainer, placeholder);
+      placeholder.remove();
+    }
+
+    placeholder = null;
   };
 
-  const scheduleHideTurnstileModal = (clearContainer = true) => {
+  const scheduleRestoreCaptchaContainer = (clearContainer = true) => {
     window.clearTimeout(hideTimer);
-    hideTimer = window.setTimeout(() => hideTurnstileModal(clearContainer), 600);
-  };
-
-  const syncTurnstileModal = () => {
-    const container = getCaptchaContainer();
-    if (!container) return;
-
-    const hasFrame = Boolean(container.querySelector('iframe'));
-    const hasToken = Boolean(container.querySelector('input[name="cf-turnstile-response"]')?.value);
-
-    if (hasFrame && !hasToken) {
-      showTurnstileModal();
-      return;
-    }
-
-    if (hasToken) {
-      scheduleHideTurnstileModal(true);
-      return;
-    }
-
-    if (!container.children.length) {
-      document.body?.classList.remove(activeClass);
-    }
-  };
-
-  const observeCaptchaContainer = (container) => {
-    if (!container || container.__walineTurnstileObserved) return;
-
-    const observer = new MutationObserver(syncTurnstileModal);
-    observer.observe(container, {
-      attributes: true,
-      childList: true,
-      subtree: true,
-      attributeFilter: ['value'],
-    });
-
-    container.__walineTurnstileObserved = true;
-    syncTurnstileModal();
-  };
-
-  const observeWaline = () => {
-    const container = getCaptchaContainer();
-    if (container) {
-      observeCaptchaContainer(container);
-      return;
-    }
-
-    const observer = new MutationObserver(() => {
-      const captchaContainer = getCaptchaContainer();
-      if (!captchaContainer) return;
-
-      observeCaptchaContainer(captchaContainer);
-      observer.disconnect();
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
+    hideTimer = window.setTimeout(() => restoreCaptchaContainer(clearContainer), 600);
   };
 
   const patchTurnstile = (turnstile) => {
@@ -96,6 +101,7 @@
     if (typeof originalRender !== 'function') return turnstile;
 
     turnstile.render = (target, options = {}) => {
+      const container = moveCaptchaToModal();
       showTurnstileModal();
 
       let widgetId;
@@ -105,21 +111,21 @@
             turnstile.remove(widgetId);
           } catch (_) {}
         }
-        scheduleHideTurnstileModal(true);
+        scheduleRestoreCaptchaContainer(true);
       };
 
-      widgetId = originalRender(target, {
+      widgetId = originalRender(container || target, {
         ...options,
         callback: (token) => {
           options.callback?.(token);
           cleanup();
         },
         'error-callback': (...args) => {
-          document.body?.classList.remove(activeClass);
+          restoreCaptchaContainer(false);
           options['error-callback']?.(...args);
         },
         'expired-callback': (...args) => {
-          document.body?.classList.remove(activeClass);
+          restoreCaptchaContainer(false);
           options['expired-callback']?.(...args);
         },
       });
@@ -129,20 +135,6 @@
 
     turnstile.__walineTurnstilePatched = true;
     return turnstile;
-  };
-
-  const startPatchPolling = () => {
-    let attempts = 0;
-    const timer = window.setInterval(() => {
-      attempts += 1;
-      if (window.turnstile) {
-        window.turnstile = patchTurnstile(window.turnstile);
-        window.clearInterval(timer);
-      }
-      if (attempts > 100) {
-        window.clearInterval(timer);
-      }
-    }, 30);
   };
 
   const installTurnstileHook = () => {
@@ -170,6 +162,22 @@
     } catch (_) {}
   };
 
+  const startPatchPolling = () => {
+    let attempts = 0;
+    const timer = window.setInterval(() => {
+      attempts += 1;
+
+      if (window.turnstile) {
+        window.turnstile = patchTurnstile(window.turnstile);
+        window.clearInterval(timer);
+      }
+
+      if (attempts > 100) {
+        window.clearInterval(timer);
+      }
+    }, 30);
+  };
+
   document.addEventListener('click', (event) => {
     if (event.target?.closest?.('.wl-btn.primary')) {
       showTurnstileModal();
@@ -177,13 +185,5 @@
     }
   }, true);
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      observeWaline();
-      installTurnstileHook();
-    }, { once: true });
-  } else {
-    observeWaline();
-    installTurnstileHook();
-  }
+  installTurnstileHook();
 })();
