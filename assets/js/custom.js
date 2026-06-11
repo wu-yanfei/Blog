@@ -22,31 +22,32 @@
   let placeholder;
   let watchTimer;
   let restoreTimer;
-  let turnstilePatchTimer;
 
-  const patchTurnstileSize = () => {
+  const forceTurnstileNormalSize = () => {
     const patch = () => {
       const turnstile = window.turnstile;
-      if (!turnstile || turnstile.__walineSizePatched || typeof turnstile.render !== 'function') return false;
+      if (!turnstile || turnstile.__walineNormalSizePatched || typeof turnstile.render !== 'function') return false;
 
       const render = turnstile.render.bind(turnstile);
       turnstile.render = (target, options = {}) => render(target, {
         ...options,
         size: 'normal',
       });
-      turnstile.__walineSizePatched = true;
+      turnstile.__walineNormalSizePatched = true;
       return true;
     };
 
-    if (patch()) return;
+    if (patch() || window.__walineTurnstileScriptPatched) return;
 
-    let attempts = 0;
-    window.clearInterval(turnstilePatchTimer);
-    turnstilePatchTimer = window.setInterval(() => {
-      if (patch() || ++attempts > 200) {
-        window.clearInterval(turnstilePatchTimer);
+    const appendChild = Node.prototype.appendChild;
+    Node.prototype.appendChild = function (node) {
+      if (node instanceof HTMLScriptElement && node.src.includes('challenges.cloudflare.com/turnstile/')) {
+        node.addEventListener('load', patch, { once: true });
       }
-    }, 10);
+      return appendChild.call(this, node);
+    };
+
+    window.__walineTurnstileScriptPatched = true;
   };
 
   const isSubmitting = (button) => Boolean(button?.disabled || button?.querySelector('svg'));
@@ -139,11 +140,10 @@
     }, 25);
   };
 
+  forceTurnstileNormalSize();
+
   document.addEventListener('click', (event) => {
     const button = event.target?.closest?.('.wl-btn.primary');
-    if (button) {
-      patchTurnstileSize();
-      waitForSubmit(button);
-    }
+    if (button) waitForSubmit(button);
   });
 })();
