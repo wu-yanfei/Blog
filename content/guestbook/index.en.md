@@ -19,4 +19,4 @@ You can use this page to:
 - share feedback or ideas;
 - simply say hello.
 
-The comment box below is powered by Waline.
+
