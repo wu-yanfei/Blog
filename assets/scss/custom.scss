@@ -101,7 +101,7 @@ body.waline-turnstile-active .waline-turnstile-modal {
   line-height: 1.5;
 }
 
-.waline-turnstile-card .wl-captcha-container {
+.waline-turnstile-mount {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -109,11 +109,11 @@ body.waline-turnstile-active .waline-turnstile-modal {
   min-height: 65px;
 }
 
-.waline-turnstile-card .wl-captcha-container > div {
+.waline-turnstile-mount > div {
   max-width: 100%;
 }
 
-.waline-turnstile-card .wl-captcha-container iframe {
+.waline-turnstile-mount iframe {
   border-radius: 0.5rem;
 }
 
