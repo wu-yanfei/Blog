@@ -90,3 +90,27 @@ html[data-theme-mode='dark'] {
     --waline-info-color: #666;
   }
 }
+
+.wl-captcha-container {
+  flex-basis: 100%;
+  display: flex;
+  justify-content: flex-end;
+  min-height: 0;
+  margin: 0.25rem 0 0.5rem;
+  order: 1;
+}
+
+.wl-info {
+  order: 2;
+}
+
+.wl-captcha-container:empty {
+  display: none;
+}
+
+@media (max-width: 580px) {
+  .wl-captcha-container {
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+}
