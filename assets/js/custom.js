@@ -3,11 +3,7 @@
   if (!waline) return;
 
   waline.path = window.location.pathname.replace(/^\/en\//, '/');
-
-  const turnstileKey = waline.turnstileKey;
-  if (!turnstileKey) return;
-
-  delete waline.turnstileKey;
+  if (!waline.turnstileKey) return;
 
   const activeClass = 'waline-turnstile-active';
   const isEnglish = window.location.pathname.startsWith('/en/');
@@ -25,10 +21,59 @@
 
   let modal;
   let mount;
-  let widgetId;
-  let verifiedSubmit = false;
-  let pendingTurnstileToken = '';
-  let rejectVerification;
+  let placeholder;
+  let watchTimer;
+  let restoreTimer;
+
+  const reloadPage = () => window.location.reload();
+  const isSubmitting = (button) => Boolean(button?.disabled || button?.querySelector('svg'));
+  const getCaptchaContainer = () => document.querySelector('.wl-captcha-container');
+
+  const forceTurnstileOptions = () => {
+    const patch = () => {
+      const turnstile = window.turnstile;
+      if (!turnstile || turnstile.__walineOptionsPatched || typeof turnstile.render !== 'function') return false;
+
+      const render = turnstile.render.bind(turnstile);
+      turnstile.render = (target, options = {}) => render(target, {
+        ...options,
+        size: 'normal',
+        language: isEnglish ? 'en' : 'zh-CN',
+        'error-callback': (...args) => {
+          options['error-callback']?.(...args);
+          reloadPage();
+        },
+        'expired-callback': (...args) => {
+          options['expired-callback']?.(...args);
+          reloadPage();
+        },
+      });
+      turnstile.__walineOptionsPatched = true;
+      return true;
+    };
+
+    if (patch() || window.__walineTurnstileScriptPatched) return;
+
+    const appendChild = Node.prototype.appendChild;
+    const restoreAppendChild = () => {
+      if (Node.prototype.appendChild === patchedAppendChild) {
+        Node.prototype.appendChild = appendChild;
+      }
+    };
+    const patchedAppendChild = function (node) {
+      if (node instanceof HTMLScriptElement && node.src.includes('challenges.cloudflare.com/turnstile/')) {
+        node.addEventListener('load', () => {
+          patch();
+          restoreAppendChild();
+        }, { once: true });
+        node.addEventListener('error', restoreAppendChild, { once: true });
+      }
+      return appendChild.call(this, node);
+    };
+
+    Node.prototype.appendChild = patchedAppendChild;
+    window.__walineTurnstileScriptPatched = true;
+  };
 
   const ensureModal = () => {
     if (modal) return;
@@ -48,7 +93,7 @@
     close.title = labels.close;
     close.setAttribute('aria-label', labels.close);
     close.textContent = '×';
-    close.addEventListener('click', cancelVerification);
+    close.addEventListener('click', reloadPage);
 
     const title = document.createElement('div');
     title.className = 'waline-turnstile-title';
@@ -66,164 +111,77 @@
     document.body.append(modal);
   };
 
-  const openModal = () => {
-    ensureModal();
-    document.body.classList.add(activeClass);
-  };
-
-  const closeModal = () => {
+  const restoreCaptcha = (clear = false) => {
+    window.clearInterval(watchTimer);
+    window.clearTimeout(restoreTimer);
     document.body.classList.remove(activeClass);
 
-    if (window.turnstile && widgetId !== undefined) {
-      try {
-        window.turnstile.remove(widgetId);
-      } catch (_) {}
-    }
+    const container = getCaptchaContainer();
+    if (container && clear) container.replaceChildren();
 
-    widgetId = undefined;
-    mount?.replaceChildren();
+    if (container && placeholder?.parentNode) {
+      placeholder.parentNode.insertBefore(container, placeholder);
+      placeholder.remove();
+    }
+    placeholder = null;
   };
 
-  function cancelVerification() {
-    const reject = rejectVerification;
-    rejectVerification = undefined;
-    closeModal();
-    reject?.(new Error('Turnstile verification cancelled.'));
-  }
+  const openCaptchaModal = (button) => {
+    const container = getCaptchaContainer();
+    if (!container) return;
 
-  const loadTurnstile = () => new Promise((resolve, reject) => {
-    if (window.turnstile) {
-      window.turnstile.ready(() => resolve(window.turnstile));
-      return;
+    window.clearTimeout(restoreTimer);
+    ensureModal();
+
+    if (!placeholder && container.parentNode !== mount) {
+      placeholder = document.createComment('waline captcha placeholder');
+      container.parentNode?.insertBefore(placeholder, container);
     }
 
-    const onLoad = () => {
-      if (!window.turnstile) {
-        reject(new Error('Turnstile is unavailable.'));
+    mount.append(container);
+    document.body.classList.add(activeClass);
+
+    let ticks = 0;
+    window.clearInterval(watchTimer);
+    watchTimer = window.setInterval(() => {
+      const token = container.querySelector('input[name="cf-turnstile-response"]')?.value;
+
+      if (token) {
+        restoreTimer = window.setTimeout(() => restoreCaptcha(true), 600);
         return;
       }
-      window.turnstile.ready(() => resolve(window.turnstile));
-    };
 
-    let script = document.querySelector('script[src*="challenges.cloudflare.com/turnstile/"]');
-    if (script) {
-      script.addEventListener('load', onLoad, { once: true });
-      script.addEventListener('error', () => reject(new Error('Failed to load Turnstile.')), { once: true });
-
-      let attempts = 0;
-      const timer = window.setInterval(() => {
-        if (window.turnstile) {
-          window.clearInterval(timer);
-          onLoad();
-        } else if (++attempts > 100) {
-          window.clearInterval(timer);
-          reject(new Error('Turnstile is unavailable.'));
-        }
-      }, 50);
-      return;
-    }
-
-    script = document.createElement('script');
-    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
-    script.async = true;
-    script.defer = true;
-    script.addEventListener('load', onLoad, { once: true });
-    script.addEventListener('error', () => reject(new Error('Failed to load Turnstile.')), { once: true });
-    document.head.append(script);
-  });
-
-  const verifyTurnstile = async () => {
-    openModal();
-
-    const turnstile = await loadTurnstile();
-
-    return new Promise((resolve, reject) => {
-      rejectVerification = reject;
-
-      widgetId = turnstile.render(mount, {
-        sitekey: turnstileKey,
-        action: 'social',
-        size: 'normal',
-        language: isEnglish ? 'en' : 'zh-CN',
-        callback: (token) => {
-          rejectVerification = undefined;
-          closeModal();
-          resolve(token);
-        },
-        'error-callback': () => {
-          rejectVerification = undefined;
-          closeModal();
-          reject(new Error('Turnstile verification failed.'));
-        },
-        'expired-callback': () => {
-          rejectVerification = undefined;
-          closeModal();
-          reject(new Error('Turnstile verification expired.'));
-        },
-      });
-    });
-  };
-
-  const patchWalineRequest = () => {
-    if (window.__walineTurnstileFetchPatched) return;
-
-    const nativeFetch = window.fetch.bind(window);
-
-    window.fetch = (input, init = {}) => {
-      const url = typeof input === 'string' ? input : input?.url;
-      const method = (init.method || input?.method || 'GET').toUpperCase();
-
-      if (
-        pendingTurnstileToken &&
-        typeof url === 'string' &&
-        url.startsWith(waline.serverURL) &&
-        url.includes('/api/comment') &&
-        (method === 'POST' || method === 'PUT') &&
-        typeof init.body === 'string'
-      ) {
-        try {
-          const body = JSON.parse(init.body);
-          body.turnstile = pendingTurnstileToken;
-          init = { ...init, body: JSON.stringify(body) };
-          pendingTurnstileToken = '';
-        } catch (_) {}
+      if (!isSubmitting(button)) {
+        restoreCaptcha(false);
+        return;
       }
 
-      return nativeFetch(input, init);
-    };
-
-    window.__walineTurnstileFetchPatched = true;
+      if (++ticks > 600) {
+        reloadPage();
+      }
+    }, 200);
   };
 
-  const submitAfterVerification = async (button) => {
-    try {
-      pendingTurnstileToken = await verifyTurnstile();
-      verifiedSubmit = true;
-      button.click();
-      window.setTimeout(() => {
-        pendingTurnstileToken = '';
-      }, 10000);
-    } catch (_) {}
+  const waitForSubmit = (button) => {
+    let attempts = 0;
+    const timer = window.setInterval(() => {
+      if (isSubmitting(button)) {
+        window.clearInterval(timer);
+        openCaptchaModal(button);
+        return;
+      }
+
+      if (++attempts > 20) window.clearInterval(timer);
+    }, 25);
   };
 
-  patchWalineRequest();
+  const getSubmitButton = (event) => event.composedPath()
+    .find((node) => node instanceof HTMLElement && node.matches('.wl-btn.primary'));
 
-  const getSubmitButton = (event) => {
-    return event.composedPath()
-      .find((node) => node instanceof HTMLElement && node.matches('.wl-btn.primary'));
-  };
+  forceTurnstileOptions();
 
   document.addEventListener('click', (event) => {
     const button = getSubmitButton(event);
-    if (!button) return;
-
-    if (verifiedSubmit) {
-      verifiedSubmit = false;
-      return;
-    }
-
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    submitAfterVerification(button);
-  }, true);
+    if (button) waitForSubmit(button);
+  });
 })();
