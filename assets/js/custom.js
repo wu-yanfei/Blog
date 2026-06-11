@@ -172,6 +172,7 @@
 
   document.addEventListener('click', (event) => {
     if (event.target?.closest?.('.wl-btn.primary')) {
+      showTurnstileModal();
       startPatchPolling();
     }
   }, true);

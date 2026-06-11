@@ -92,17 +92,9 @@ html[data-theme-mode='dark'] {
 }
 
 .wl-captcha-container {
-  display: none;
-}
-
-body.waline-turnstile-active {
-  overflow: hidden;
-}
-
-body.waline-turnstile-active .wl-captcha-container {
   position: fixed;
   inset: 0;
-  z-index: 10000;
+  z-index: -1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -110,7 +102,23 @@ body.waline-turnstile-active .wl-captcha-container {
   height: 100vh;
   margin: 0;
   padding: 1rem;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+body.waline-turnstile-active {
+  overflow: hidden;
+}
+
+body.waline-turnstile-active .wl-captcha-container {
+  z-index: 10000;
+  overflow: visible;
   background: rgba(246, 248, 250, 0.55);
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
