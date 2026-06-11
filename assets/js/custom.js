@@ -97,19 +97,39 @@
       return;
     }
 
+    const onLoad = () => {
+      if (!window.turnstile) {
+        reject(new Error('Turnstile is unavailable.'));
+        return;
+      }
+      window.turnstile.ready(() => resolve(window.turnstile));
+    };
+
     let script = document.querySelector('script[src*="challenges.cloudflare.com/turnstile/"]');
-    if (!script) {
-      script = document.createElement('script');
-      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
-      script.async = true;
-      script.defer = true;
-      document.head.append(script);
+    if (script) {
+      script.addEventListener('load', onLoad, { once: true });
+      script.addEventListener('error', () => reject(new Error('Failed to load Turnstile.')), { once: true });
+
+      let attempts = 0;
+      const timer = window.setInterval(() => {
+        if (window.turnstile) {
+          window.clearInterval(timer);
+          onLoad();
+        } else if (++attempts > 100) {
+          window.clearInterval(timer);
+          reject(new Error('Turnstile is unavailable.'));
+        }
+      }, 50);
+      return;
     }
 
-    script.addEventListener('load', () => {
-      window.turnstile?.ready(() => resolve(window.turnstile));
-    }, { once: true });
+    script = document.createElement('script');
+    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+    script.async = true;
+    script.defer = true;
+    script.addEventListener('load', onLoad, { once: true });
     script.addEventListener('error', () => reject(new Error('Failed to load Turnstile.')), { once: true });
+    document.head.append(script);
   });
 
   const verifyTurnstile = async () => {
@@ -188,8 +208,13 @@
 
   patchWalineRequest();
 
+  const getSubmitButton = (event) => {
+    return event.composedPath()
+      .find((node) => node instanceof HTMLElement && node.matches('.wl-btn.primary'));
+  };
+
   document.addEventListener('click', (event) => {
-    const button = event.target?.closest?.('.wl-btn.primary');
+    const button = getSubmitButton(event);
     if (!button) return;
 
     if (verifiedSubmit) {
