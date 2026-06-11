@@ -92,25 +92,40 @@ html[data-theme-mode='dark'] {
 }
 
 .wl-captcha-container {
-  flex-basis: 100%;
-  display: flex;
-  justify-content: flex-end;
-  min-height: 0;
-  margin: 0.25rem 0 0.5rem;
-  order: 1;
-}
-
-.wl-info {
-  order: 2;
-}
-
-.wl-captcha-container:empty {
   display: none;
 }
 
-@media (max-width: 580px) {
-  .wl-captcha-container {
-    justify-content: center;
-    margin-top: 0.5rem;
+body.waline-turnstile-active {
+  overflow: hidden;
+}
+
+body.waline-turnstile-active .wl-captcha-container {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 1rem;
+  background: rgba(246, 248, 250, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+body.waline-turnstile-active .wl-captcha-container iframe {
+  border-radius: 0.5rem;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.2);
+}
+
+html[data-theme-mode='dark'] body.waline-turnstile-active .wl-captcha-container {
+  background: rgba(21, 27, 35, 0.65);
+}
+
+@media (prefers-color-scheme: dark) {
+  html[data-theme-mode='auto'] body.waline-turnstile-active .wl-captcha-container {
+    background: rgba(21, 27, 35, 0.65);
   }
 }
